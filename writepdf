@@ -1,0 +1,70 @@
+using System;
+using PdfSharp;
+using System.Drawing;
+using System.Text;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
+using PdfSharp.Pdf.AcroForms;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+
+            //string filePath = @"C:\Users\Admin\Downloads\sample_pdf.pdf";
+            PdfDocument document = PdfReader.Open(@"C:\Users\Admin\Downloads\sample_pdf.pdf", PdfDocumentOpenMode.Modify);
+            // Open the PDF document
+            //PdfDocument document = PdfReader.Open(filePath, PdfDocumentOpenMode.Modify);
+
+            // Get the AcroForm dictionary
+            PdfAcroForm form = document.AcroForm;
+            //This section makes the text visible after passing a long text and will wrap it!
+            if (form.Elements.ContainsKey("/NeedAppearances"))
+            {
+                form.Elements["/NeedAppearances"] = new PdfBoolean(true);
+            }
+            else
+            {
+                form.Elements.Add("/NeedAppearances", new PdfBoolean(true));
+               
+            }
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            var enc1252 = Encoding.GetEncoding(1252);
+
+            PdfTextField field = (PdfTextField)(form.Fields["Address"]);
+            field.Value = new PdfString("testsadsad");
+            //field.Value = new PdfString("test");
+            field.ReadOnly = true;
+            document.Save(@"C:\Users\Admin\Downloads\sample_pdf.pdf");
+            PdfTextField Title = (PdfTextField)(form.Fields["Adress"]);
+            Title.Text = "ghgfgh";
+            document.Save(@"C:\Users\Admin\Downloads\sample_pdf.pdf");
+            //PdfAcroForm acroForm = document.AcroForm;
+            if (document.AcroForm != null)
+            {
+
+
+                //form.Fields["Address"].Value = new PdfString("This is the new value");
+                var name = (PdfTextField)(form.Fields["Address"]);
+                name.Value = new PdfString("ramiboy");
+                document.Save(@"C:\Users\Admin\Downloads\sample_pdf.pdf");
+
+
+            }
+            else
+            {
+                Console.WriteLine("No AcroForm fields found.");
+                
+            }
+            /*foreach ( PdfAcroField field in acroForm.Fields)
+            {
+                string fname = field.Name;
+                break;
+            }*/
+            // Read the values of all fields
+
+         }
+    }
+}
